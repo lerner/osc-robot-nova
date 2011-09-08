@@ -27,6 +27,18 @@ LOG = logging.getLogger('nova.tests.integrated')
 
 
 class ServersTest(integrated_helpers._IntegratedTestBase):
+
+    def _wait_for_creation(self, server):
+        retries = 0
+        while server['status'] == 'BUILD':
+            time.sleep(1)
+            server = self.api.get_server(server['id'])
+            print server
+            retries = retries + 1
+            if retries > 5:
+                break
+        return server
+
     def test_get_servers(self):
         """Simple check that listing servers works."""
         servers = self.api.get_servers()
@@ -35,9 +47,9 @@ class ServersTest(integrated_helpers._IntegratedTestBase):
 
     def test_create_and_delete_server(self):
         """Creates and deletes a server."""
+        self.flags(stub_network=True)
 
         # Create server
-
         # Build the server data gradually, checking errors along the way
         server = {}
         good_server = self._build_minimal_create_server_request()
@@ -50,7 +62,7 @@ class ServersTest(integrated_helpers._IntegratedTestBase):
                           self.api.post_server, post)
 
         # With an invalid imageRef, this throws 500.
-        server['imageRef'] = self.user.get_invalid_image()
+        server['imageRef'] = self.get_invalid_image()
         # TODO(justinsb): Check whatever the spec says should be thrown here
         self.assertRaises(client.OpenStackApiException,
                           self.api.post_server, post)
@@ -90,19 +102,15 @@ class ServersTest(integrated_helpers._IntegratedTestBase):
         server_ids = [server['id'] for server in servers]
         self.assertTrue(created_server_id in server_ids)
 
-        # Wait (briefly) for creation
-        retries = 0
-        while found_server['status'] == 'build':
-            LOG.debug("found server: %s" % found_server)
-            time.sleep(1)
-            found_server = self.api.get_server(created_server_id)
-            retries = retries + 1
-            if retries > 5:
-                break
+        found_server = self._wait_for_creation(found_server)
 
         # It should be available...
         # TODO(justinsb): Mock doesn't yet do this...
-        #self.assertEqual('available', found_server['status'])
+        self.assertEqual('ACTIVE', found_server['status'])
+        servers = self.api.get_servers(detail=True)
+        for server in servers:
+            self.assertTrue("image" in server)
+            self.assertTrue("flavor" in server)
 
         self._delete_server(created_server_id)
 
@@ -176,6 +184,7 @@ class ServersTest(integrated_helpers._IntegratedTestBase):
 
     def test_create_and_rebuild_server(self):
         """Rebuild a server."""
+        self.flags(stub_network=True)
 
         # create a server with initially has no metadata
         server = self._build_minimal_create_server_request()
@@ -185,10 +194,12 @@ class ServersTest(integrated_helpers._IntegratedTestBase):
         self.assertTrue(created_server['id'])
         created_server_id = created_server['id']
 
+        created_server = self._wait_for_creation(created_server)
+
         # rebuild the server with metadata
         post = {}
         post['rebuild'] = {
-            "imageRef": "https://localhost/v1.1/32278/images/2",
+            "imageRef": "https://localhost/v1.1/32278/images/3",
             "name": "blah",
         }
 
@@ -200,12 +211,14 @@ class ServersTest(integrated_helpers._IntegratedTestBase):
         self.assertEqual(created_server_id, found_server['id'])
         self.assertEqual({}, found_server.get('metadata'))
         self.assertEqual('blah', found_server.get('name'))
+        self.assertEqual('3', found_server.get('image')['id'])
 
         # Cleanup
         self._delete_server(created_server_id)
 
     def test_create_and_rebuild_server_with_metadata(self):
         """Rebuild a server with metadata."""
+        self.flags(stub_network=True)
 
         # create a server with initially has no metadata
         server = self._build_minimal_create_server_request()
@@ -214,6 +227,8 @@ class ServersTest(integrated_helpers._IntegratedTestBase):
         LOG.debug("created_server: %s" % created_server)
         self.assertTrue(created_server['id'])
         created_server_id = created_server['id']
+
+        created_server = self._wait_for_creation(created_server)
 
         # rebuild the server with metadata
         post = {}
@@ -242,6 +257,7 @@ class ServersTest(integrated_helpers._IntegratedTestBase):
 
     def test_create_and_rebuild_server_with_metadata_removal(self):
         """Rebuild a server with metadata."""
+        self.flags(stub_network=True)
 
         # create a server with initially has no metadata
         server = self._build_minimal_create_server_request()
@@ -257,6 +273,8 @@ class ServersTest(integrated_helpers._IntegratedTestBase):
         LOG.debug("created_server: %s" % created_server)
         self.assertTrue(created_server['id'])
         created_server_id = created_server['id']
+
+        created_server = self._wait_for_creation(created_server)
 
         # rebuild the server with metadata
         post = {}

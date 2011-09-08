@@ -116,8 +116,9 @@ def allowed_volumes(context, requested_volumes, size):
     allowed_gigabytes = _get_request_allotment(requested_gigabytes,
                                                used_gigabytes,
                                                quota['gigabytes'])
-    allowed_volumes = min(allowed_volumes,
-                          int(allowed_gigabytes // size))
+    if size != 0:
+        allowed_volumes = min(allowed_volumes,
+                              int(allowed_gigabytes // size))
     return min(requested_volumes, allowed_volumes)
 
 
@@ -164,5 +165,5 @@ def allowed_injected_file_path_bytes(context):
 
 
 class QuotaError(exception.ApiError):
-    """Quota Exceeeded."""
+    """Quota Exceeded."""
     pass

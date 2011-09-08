@@ -11,6 +11,7 @@ Antony Messerli <ant@openstack.org>
 Armando Migliaccio <Armando.Migliaccio@eu.citrix.com>
 Arvind Somya <asomya@cisco.com>
 Bilal Akhtar <bilalakhtar@ubuntu.com>
+Brad Hall <brad@nicira.com>
 Brian Lamar <brian.lamar@rackspace.com>
 Brian Schott <bschott@isi.edu>
 Brian Waldon <brian.waldon@rackspace.com>
@@ -18,6 +19,7 @@ Chiradeep Vittal <chiradeep@cloud.com>
 Chmouel Boudjnah <chmouel@chmouel.com>
 Chris Behrens <cbehrens@codestud.com>
 Christian Berendt <berendt@b1-systems.de>
+Christopher MacGown <chris@pistoncloud.com>
 Chuck Short <zulcss@ubuntu.com>
 Cory Wright <corywright@gmail.com>
 Dan Prince <dan.prince@rackspace.com>
@@ -29,6 +31,7 @@ Devendra Modium <dmodium@isi.edu>
 Devin Carlen <devin.carlen@gmail.com>
 Donal Lafferty <donal.lafferty@citrix.com>
 Ed Leafe <ed@leafe.com>
+Edouard Thuleau <thuleau@gmail.com>
 Eldar Nugaev <reldan@oscloud.ru>
 Eric Day <eday@oddments.org>
 Eric Windisch <eric@cloudscaling.com>
@@ -59,6 +62,7 @@ Joshua McKenty <jmckenty@gmail.com>
 Justin Santa Barbara <justin@fathomdb.com>
 Justin Shepherd <jshepher@rackspace.com>
 Kei Masumoto <masumotok@nttdata.co.jp>
+masumoto<masumotok@nttdata.co.jp>
 Ken Pepple <ken.pepple@gmail.com>
 Kevin Bringard <kbringard@attinteractive.com>
 Kevin L. Mitchell <kevin.mitchell@rackspace.com>
@@ -67,6 +71,7 @@ Koji Iida <iida.koji@lab.ntt.co.jp>
 Lorin Hochstein <lorin@isi.edu>
 Lvov Maxim <usrleon@gmail.com>
 Mandell Degerness <mdegerne@gmail.com>
+Mark McLoughlin <markmc@redhat.com>
 Mark Washenberger <mark.washenberger@rackspace.com>
 Masanori Itoh <itoumsn@nttdata.co.jp>
 Matt Dietz <matt.dietz@rackspace.com>
@@ -98,8 +103,10 @@ Scott Moser <smoser@ubuntu.com>
 Soren Hansen <soren.hansen@rackspace.com>
 Stephanie Reese <reese.sm@gmail.com>
 Thierry Carrez <thierry@openstack.org>
+Tim Simpson <tim.simpson@rackspace.com>
 Todd Willey <todd@ansolabs.com>
 Trey Morris <trey.morris@rackspace.com>
+Troy Toman <troy.toman@rackspace.com>
 Tushar Patil <tushar.vitthal.patil@gmail.com>
 Vasiliy Shlykov <vash@vasiliyshlykov.org>
 Vishvananda Ishaya <vishvananda@gmail.com>

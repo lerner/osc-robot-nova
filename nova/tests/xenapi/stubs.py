@@ -18,6 +18,8 @@
 
 import eventlet
 import json
+import random
+
 from nova.virt import xenapi_conn
 from nova.virt.xenapi import fake
 from nova.virt.xenapi import volume_utils
@@ -28,10 +30,10 @@ from nova import utils
 
 def stubout_instance_snapshot(stubs):
     @classmethod
-    def fake_fetch_image(cls, context, session, instance_id, image, user,
+    def fake_fetch_image(cls, context, session, instance, image, user,
                          project, type):
         from nova.virt.xenapi.fake import create_vdi
-        name_label = "instance-%s" % instance_id
+        name_label = "instance-%s" % instance.id
         #TODO: create fake SR record
         sr_ref = "fakesr"
         vdi_ref = create_vdi(name_label=name_label, read_only=False,
@@ -191,6 +193,7 @@ class FakeSessionForVMTests(fake.SessionBase):
         vm['power_state'] = 'Running'
         vm['is_a_template'] = False
         vm['is_control_domain'] = False
+        vm['domid'] = random.randrange(1, 1 << 16)
 
     def VM_snapshot(self, session_ref, vm_ref, label):
         status = "Running"
@@ -290,6 +293,7 @@ class FakeSessionForMigrationTests(fake.SessionBase):
         vm['power_state'] = 'Running'
         vm['is_a_template'] = False
         vm['is_control_domain'] = False
+        vm['domid'] = random.randrange(1, 1 << 16)
 
 
 def stub_out_migration_methods(stubs):

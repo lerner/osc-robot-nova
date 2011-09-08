@@ -21,7 +21,6 @@ Admin API controller, exposed through http via the api worker.
 """
 
 import base64
-import datetime
 import netaddr
 import urllib
 
@@ -33,6 +32,7 @@ from nova import log as logging
 from nova import utils
 from nova.api.ec2 import ec2utils
 from nova.auth import manager
+from nova.compute import vm_states
 
 
 FLAGS = flags.FLAGS
@@ -273,8 +273,7 @@ class AdminController(object):
         """Get the VPN instance for a project ID."""
         for instance in db.instance_get_all_by_project(context, project_id):
             if (instance['image_id'] == str(FLAGS.vpn_image_id)
-                and not instance['state_description'] in
-                    ['shutting_down', 'shutdown']):
+                and not instance['vm_state'] in [vm_states.DELETED]):
                 return instance
 
     def start_vpn(self, context, project):
@@ -283,8 +282,10 @@ class AdminController(object):
             # NOTE(vish) import delayed because of __init__.py
             from nova.cloudpipe import pipelib
             pipe = pipelib.CloudPipe()
+            proj = manager.AuthManager().get_project(project)
+            user_id = proj.project_manager_id
             try:
-                pipe.launch_vpn_instance(project)
+                pipe.launch_vpn_instance(project, user_id)
             except db.NoMoreNetworks:
                 raise exception.ApiError("Unable to claim IP for VPN instance"
                                          ", ensure it isn't running, and try "

@@ -137,7 +137,7 @@ class VMOps(object):
     def _create_disks(self, context, instance):
         disk_image_type = VMHelper.determine_disk_image_type(instance)
         vdis = VMHelper.fetch_image(context, self._session,
-                instance.id, instance.image_ref,
+                instance, instance.image_ref,
                 instance.user_id, instance.project_id,
                 disk_image_type)
         return vdis
@@ -182,11 +182,11 @@ class VMOps(object):
         try:
             if instance.kernel_id:
                 kernel = VMHelper.fetch_image(context, self._session,
-                        instance.id, instance.kernel_id, instance.user_id,
+                        instance, instance.kernel_id, instance.user_id,
                         instance.project_id, ImageType.KERNEL)[0]
             if instance.ramdisk_id:
                 ramdisk = VMHelper.fetch_image(context, self._session,
-                        instance.id, instance.ramdisk_id, instance.user_id,
+                        instance, instance.ramdisk_id, instance.user_id,
                         instance.project_id, ImageType.RAMDISK)[0]
             # Create the VM ref and attach the first disk
             first_vdi_ref = self._session.call_xenapi('VDI.get_by_uuid',
@@ -239,7 +239,7 @@ class VMOps(object):
         self._attach_disks(instance, disk_image_type, vm_ref, first_vdi_ref,
             vdis)
 
-        # Alter the image before VM start for, e.g. network injection
+        # Alter the image before VM start for network injection.
         if FLAGS.flat_injected:
             VMHelper.preconfigure_instance(self._session, instance,
                                            first_vdi_ref, network_info)
@@ -709,9 +709,6 @@ class VMOps(object):
         if resp['returncode'] != '0':
             LOG.error(_('Failed to update password: %(resp)r') % locals())
             return None
-        db.instance_update(nova_context.get_admin_context(),
-                                  instance['id'],
-                                  dict(admin_pass=new_pass))
         return resp['message']
 
     def inject_file(self, instance, path, contents):
