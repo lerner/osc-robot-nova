@@ -229,8 +229,8 @@ class FloatingIP(object):
 
             # call to correct network host to associate the floating ip
             self.network_api.associate_floating_ip(context,
-                                              floating_ip,
-                                              fixed_ip,
+                                              floating_ip['address'],
+                                              fixed_ip['address'],
                                               affect_auto_assigned=True)
         return ips
 
