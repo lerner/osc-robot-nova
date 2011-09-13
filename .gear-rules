@@ -1,0 +1,5 @@
+copy: redhat/*.init
+copy: redhat/openstack-nova-rhel-ifc-template
+copy: redhat/openstack-nova-sudoers
+copy: redhat/openstack-nova-polkit.pkla
+tar.gz: . name=nova-@version@ base=nova-@version@
