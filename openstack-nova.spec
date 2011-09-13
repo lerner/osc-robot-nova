@@ -104,7 +104,7 @@ Requires:         %{name}-scheduler = %{version}-%{release}
 Requires:         %{name}-volume = %{version}-%{release}
 Requires:         openstack-client
 Requires:         openstack-glance = %{version}
-Requires:         openstack-glance-doc = %{version}
+#Requires:         openstack-glance-doc = %{version} # shouldn`t have this dep
 %if 0%{?with_doc}
 Requires:         %{name}-doc = %{version}-%{release}
 %endif
