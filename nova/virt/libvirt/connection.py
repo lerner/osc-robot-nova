@@ -976,11 +976,7 @@ class LibvirtConnection(driver.ComputeDriver):
                                '%(injection)s into image %(img_id)s'
                                % locals()))
             try:
-                disk.inject_data(injection_path, key, net, metadata,
-                                 partition=target_partition,
-                                 nbd=FLAGS.use_cow_images,
-                                 tune2fs=tune2fs)
-
+                disk.inject_data(injection_path, key, net, metadata)
                 if FLAGS.libvirt_type == 'lxc':
                     disk.setup_container(basepath('disk'),
                                         container_dir=container_dir,
