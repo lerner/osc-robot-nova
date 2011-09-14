@@ -132,5 +132,6 @@ setup(name='nova',
                'bin/stack',
                'bin/nova-volume',
                'bin/nova-vncproxy',
+	       'bin/nova-vsa',
                'tools/nova-debug'],
         py_modules=[])
