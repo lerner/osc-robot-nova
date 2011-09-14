@@ -15,7 +15,6 @@ Vendor:           Grid Dynamics Consulting Services, Inc.
 URL:              http://openstack.org/projects/compute/
 Source0:          nova-%{version}.tar.gz  
 Source1:          %{name}-README.rhel6
-Source2:          %{name}-noVNC-snap2011.03.24.tgz
 Source6:          %{name}.logrotate
 
 # Initscripts
@@ -33,19 +32,6 @@ Source20:         %{name}-sudoers
 Source21:         %{name}-polkit.pkla
 Source22:         %{name}-rhel-ifc-template
 
-# We need no patches as we apply them before building
-#Patch1:           %{name}-rhel-config-paths.patch
-#Patch2:           %{name}-guestfs-image-injects.patch
-#Patch3:           %{name}-libvirt.xml.template.patch
-#Patch4:           %{name}-rhel-netcat.patch
-#Patch5:           %{name}-rhel-ajaxterm-path.patch
-#Patch6:           %{name}-s3server-quickfix.patch
-#Patch7:           %{name}-scsi-target-utils-support.patch
-#Patch8:           %{name}-rpc-improvements.patch
-#Patch9:           %{name}-floating-ip-fix.patch
-#Patch10:          %{name}-novnc-auto.patch
-#Patch11:          %{name}-ip-type.patch
-
 BuildRoot:        %{_tmppath}/nova-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:        noarch
@@ -53,11 +39,25 @@ BuildRequires:    python-devel
 BuildRequires:    python-setuptools
 BuildRequires:    python-distutils-extra >= 2.18
 BuildRequires:    python-netaddr
+BuildRequires:    python-lockfile >= 0.8
+BuildRequires:    python-eventlet >= 0.9.16-1.el6
 
+BuildRequires:    python-nose
+BuildRequires:    python-IPy
+BuildRequires:    python-boto
+BuildRequires:    python-gflags
+BuildRequires:    python-routes >= 1.12.3
+BuildRequires:    python-sqlalchemy
+BuildRequires:    python-tornado
+BuildRequires:    python-webob
+BuildRequires:    intltool
+
+
+Requires:         openstack-noVNC = %{version}
 Requires:         python-nova = %{version}-%{release}
 Requires:         %{name}-config = %{version}
 Requires:         sudo
-Requires:         euca2ools = 1.3.1-gd3
+Requires:         euca2ools = 1:1.3.1-gd3
 
 Requires(post):   chkconfig grep sudo libselinux-utils
 Requires(postun): initscripts
@@ -77,18 +77,6 @@ uses an LDAP server for users and groups, but also includes a fake LDAP server,
 that stores data in Redis. It has extensive test coverage, and uses the Sphinx
 toolkit (the same as Python itself) for code and user documentation.
 
-%package          noVNC
-Summary:          OpenStack Nova VNC console service
-Group:            Applications/System
-License:          LGPL v3 with exceptions
-URL:              https://github.com/openstack/noVNC
-
-Requires:         %{name} = %{version}-%{release}
-
-%description      noVNC
-This package contains noVNC code and daemon which is required for accessing
-instances's console using VNC.
-
 %package          node-full
 Summary:          OpenStack Nova full node installation
 Group:            Applications/System
@@ -98,7 +86,7 @@ Requires:         %{name}-cc-config = %{version}
 Requires:         %{name}-api = %{version}-%{release}
 Requires:         %{name}-compute = %{version}-%{release}
 Requires:         %{name}-network = %{version}-%{release}
-Requires:         %{name}-noVNC = %{version}-%{release}
+Requires:         openstack-noVNC = %{version}
 Requires:         %{name}-objectstore = %{version}-%{release}
 Requires:         %{name}-scheduler = %{version}-%{release}
 Requires:         %{name}-volume = %{version}-%{release}
@@ -279,24 +267,6 @@ Summary:          Documentation for %{name}
 Group:            Documentation
 
 BuildRequires:    python-sphinx
-BuildRequires:    python-nose
-# Required to build module documents
-BuildRequires:    python-IPy
-BuildRequires:    python-boto
-#BuildRequires:    python-carrot
-#BuildRequires:    python-daemon
-BuildRequires:    python-eventlet
-BuildRequires:    python-gflags
-#BuildRequires:    python-mox
-#BuildRequires:    python-redis
-BuildRequires:    python-routes >= 1.12.3
-BuildRequires:    python-sqlalchemy
-BuildRequires:    python-tornado
-#BuildRequires:    python-twisted-core
-#BuildRequires:    python-twisted-web
-BuildRequires:    python-webob
-BuildRequires:    python-lockfile
-BuildRequires:    intltool
 
 %description      doc
 Nova is a cloud computing fabric controller (the main part of an IaaS system)
@@ -309,19 +279,6 @@ This package contains documentation files for %{name}.
 
 %prep
 %setup -q -n nova-%{version}
-
-#patch1 -p1
-##%patch2 -p1
-##%patch3 -p1
-##%patch4 -p0
-##%patch5 -p0
-##%patch6 -p1
-##%patch7 -p1
-#patch8 -p1
-##%patch9 -p0
-#%patch10 -p0 -d %{buildroot}%{_sharedstatedir}/nova/noVNC
-##%patch11 -p1
-
 
 install %{SOURCE1} README.rhel6
 
@@ -397,12 +354,6 @@ rm -fr %{buildroot}%{_datarootdir}/nova/{install_venv.py,nova-debug,pip-requires
 rm -fr %{buildroot}%{python_sitelib}/run_tests.*
 rm -f %{buildroot}%{_bindir}/nova-combined
 rm -f %{buildroot}/usr/share/doc/nova/README*
-
-# Add noVNC console
-install -d -m 755 %{buildroot}%{_sharedstatedir}/nova/noVNC
-tar zxf %{SOURCE2} -C %{buildroot}%{_sharedstatedir}/nova/noVNC
-cat %{_sourcedir}/openstack-nova-novnc-auto.patch | patch -p0  -d %{buildroot}%{_sharedstatedir}
-
 
 %clean
 rm -rf %{buildroot}
@@ -586,6 +537,7 @@ fi
 %{_bindir}/nova-logspool
 %{_bindir}/nova-manage
 %{_bindir}/nova-spoolsentry
+%{_bindir}/nova-vsa
 %{_bindir}/clear_rabbit_queues
 %{_bindir}/stack
 %{_datarootdir}/nova
@@ -598,10 +550,8 @@ fi
 %{_sharedstatedir}/nova/networks
 %{_sharedstatedir}/nova/tmp
 
-%files noVNC
 %{_bindir}/nova-vncproxy
 %{_initrddir}/%{name}-vncproxy
-%{_sharedstatedir}/nova/noVNC
 #%doc %{_sharedstatedir}/nova/noVNC/LICENSE.txt
 #%doc %{_sharedstatedir}/nova/noVNC/README.md
 
