@@ -15,7 +15,7 @@ Vendor:           Grid Dynamics Consulting Services, Inc.
 URL:              http://openstack.org/projects/compute/
 Source0:          nova-%{version}.tar.gz  
 Source1:          %{name}-README.rhel6
-Source2:          %{name}-noVNC-snap2011.03.24.tgz
+#Source2:          %{name}-noVNC-snap2011.03.24.tgz
 Source6:          %{name}.logrotate
 
 # Initscripts
@@ -53,7 +53,9 @@ BuildRequires:    python-devel
 BuildRequires:    python-setuptools
 BuildRequires:    python-distutils-extra >= 2.18
 BuildRequires:    python-netaddr
+BuildRequires:    python-lockfile >= 0.8
 
+Requires:         openstack-noVNC = %{version}
 Requires:         python-nova = %{version}-%{release}
 Requires:         %{name}-config = %{version}
 Requires:         sudo
@@ -77,17 +79,17 @@ uses an LDAP server for users and groups, but also includes a fake LDAP server,
 that stores data in Redis. It has extensive test coverage, and uses the Sphinx
 toolkit (the same as Python itself) for code and user documentation.
 
-%package          noVNC
-Summary:          OpenStack Nova VNC console service
-Group:            Applications/System
-License:          LGPL v3 with exceptions
-URL:              https://github.com/openstack/noVNC
+#%package          noVNC
+#Summary:          OpenStack Nova VNC console service
+#Group:            Applications/System
+#License:          LGPL v3 with exceptions
+#URL:              https://github.com/openstack/noVNC
 
-Requires:         %{name} = %{version}-%{release}
+#Requires:         %{name} = %{version}-%{release}
 
-%description      noVNC
-This package contains noVNC code and daemon which is required for accessing
-instances's console using VNC.
+#%description      noVNC
+#This package contains noVNC code and daemon which is required for accessing
+#instances's console using VNC.
 
 %package          node-full
 Summary:          OpenStack Nova full node installation
@@ -98,7 +100,7 @@ Requires:         %{name}-cc-config = %{version}
 Requires:         %{name}-api = %{version}-%{release}
 Requires:         %{name}-compute = %{version}-%{release}
 Requires:         %{name}-network = %{version}-%{release}
-Requires:         %{name}-noVNC = %{version}-%{release}
+Requires:         openstack-noVNC = %{version}
 Requires:         %{name}-objectstore = %{version}-%{release}
 Requires:         %{name}-scheduler = %{version}-%{release}
 Requires:         %{name}-volume = %{version}-%{release}
@@ -310,6 +312,7 @@ This package contains documentation files for %{name}.
 %prep
 %setup -q -n nova-%{version}
 
+# We don`t have patches as we apply them before buil
 #patch1 -p1
 ##%patch2 -p1
 ##%patch3 -p1
@@ -343,7 +346,7 @@ rm -fr doc/build/html/.doctrees doc/build/html/.buildinfo
 %endif
 
 # Setup directories
-install -d -m 755 %{buildroot}%{_sharedstatedir}/nova
+#install -d -m 755 %{buildroot}%{_sharedstatedir}/nova
 install -d -m 755 %{buildroot}%{_sharedstatedir}/nova/images
 install -d -m 755 %{buildroot}%{_sharedstatedir}/nova/instances
 install -d -m 755 %{buildroot}%{_sharedstatedir}/nova/keys
@@ -398,10 +401,10 @@ rm -fr %{buildroot}%{python_sitelib}/run_tests.*
 rm -f %{buildroot}%{_bindir}/nova-combined
 rm -f %{buildroot}/usr/share/doc/nova/README*
 
-# Add noVNC console
-install -d -m 755 %{buildroot}%{_sharedstatedir}/nova/noVNC
-tar zxf %{SOURCE2} -C %{buildroot}%{_sharedstatedir}/nova/noVNC
-cat %{_sourcedir}/openstack-nova-novnc-auto.patch | patch -p0  -d %{buildroot}%{_sharedstatedir}
+## Add noVNC console
+#install -d -m 755 %{buildroot}%{_sharedstatedir}/nova/noVNC
+#tar zxf %{SOURCE2} -C %{buildroot}%{_sharedstatedir}/nova/noVNC
+#cat %{_sourcedir}/openstack-nova-novnc-auto.patch | patch -p0  -d %{buildroot}%{_sharedstatedir}
 
 
 %clean
@@ -590,7 +593,7 @@ fi
 %{_bindir}/stack
 %{_datarootdir}/nova
 %defattr(-,nova,nobody,-)
-%dir %{_sharedstatedir}/nova
+#%dir %{_sharedstatedir}/nova
 %{_sharedstatedir}/nova/CA
 %{_sharedstatedir}/nova/images
 %{_sharedstatedir}/nova/instances
@@ -598,10 +601,10 @@ fi
 %{_sharedstatedir}/nova/networks
 %{_sharedstatedir}/nova/tmp
 
-%files noVNC
+##%files noVNC
 %{_bindir}/nova-vncproxy
 %{_initrddir}/%{name}-vncproxy
-%{_sharedstatedir}/nova/noVNC
+##%{_sharedstatedir}/nova/noVNC
 #%doc %{_sharedstatedir}/nova/noVNC/LICENSE.txt
 #%doc %{_sharedstatedir}/nova/noVNC/README.md
 
