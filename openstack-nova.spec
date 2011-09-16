@@ -40,7 +40,7 @@ BuildRequires:    python-setuptools
 BuildRequires:    python-distutils-extra >= 2.18
 BuildRequires:    python-netaddr
 BuildRequires:    python-lockfile >= 0.8
-BuildRequires:    python-eventlet >= 0.9.16-1.el6
+BuildRequires:    python-eventlet >= 0.9.16
 
 BuildRequires:    python-nose
 BuildRequires:    python-IPy
@@ -129,7 +129,7 @@ Requires:         python-IPy >= 0.70
 Requires:         python-boto >= 1.9b
 Requires:         python-carrot >= 0.10.5
 Requires:         python-daemon = 1.5.5
-Requires:         python-eventlet >= 0.9.16-1.el6
+Requires:         python-eventlet >= 0.9.16
 Requires:         python-gflags >= 1.3
 Requires:         python-lockfile >= 0.8
 Requires:         python-mox >= 0.5.0
