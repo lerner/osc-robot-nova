@@ -949,7 +949,8 @@ class LibvirtConnection(driver.ComputeDriver):
             nets.append(net_info)
 
         metadata = inst.get('metadata')
-        if any((key, len(nets), metadata)):
+        injected_files = inst.get('injected_files') or []
+        if any((key, len(nets), metadata, len(injected_files))):
             inst_name = inst['name']
 
             if config_drive:  # Should be True or None by now.
@@ -971,7 +972,7 @@ class LibvirtConnection(driver.ComputeDriver):
                            'nets into image %(img_id)s'
                            % locals()))
             try:
-                disk.inject_data(injection_path, key, nets, metadata)
+                disk.inject_data(injection_path, key, nets, metadata, injected_files)
                 if FLAGS.libvirt_type == 'lxc':
                     disk.setup_container(basepath('disk'),
                                         container_dir=container_dir,
