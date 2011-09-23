@@ -53,7 +53,7 @@ BuildRequires:    python-webob
 BuildRequires:    intltool
 
 
-Requires:         openstack-noVNC = %{version}
+Requires:         openstack-noVNC >= %{version}
 Requires:         python-nova = %{version}-%{release}
 Requires:         %{name}-config = %{version}-%{release}
 Requires:         sudo
