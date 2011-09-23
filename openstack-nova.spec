@@ -261,6 +261,31 @@ protocol, and the Redis KVS.
 
 This package contains the %{name} Volume service.
 
+%package          cc-config
+Summary:          OpenStack Compute (nova) - Cloud Controller config
+BuildRequires:    perl
+
+Conflicts:        %{name}-compute-config = %{version}-%{release}
+Requires:         %{name} = %{version}-%{release}
+Requires:         MySQL-python
+Requires:         mysql-server
+Provides:         %{name}-config = %{version}-%{release}
+
+%description
+Configuration files for Nova as Cloud Controller.
+
+%package          compute-config
+Summary:          OpenStack Compute (nova) - Compute node configuration
+BuildRequires:    perl
+
+Conflicts:        %{name}-cc-config = %{version}-%{release}
+Requires:         %{name} = %{version}-%{release}
+Provides:         %{name}-config = %{version}-%{release}
+
+%description
+Configuration files for Nova as compute node.
+
+
 %if 0%{?with_doc}
 %package doc
 Summary:          Documentation for %{name}
@@ -308,6 +333,9 @@ install -d -m 755 %{buildroot}%{_sharedstatedir}/nova/networks
 install -d -m 755 %{buildroot}%{_sharedstatedir}/nova/tmp
 install -d -m 755 %{buildroot}%{_localstatedir}/log/nova
 cp -rp nova/CA %{buildroot}%{_sharedstatedir}/nova
+
+# Install config files
+install -p -D -m 600 %{SOURCE0} %{buildroot}%{_sysconfdir}/nova/nova.conf
 
 # Install initscripts for Nova services
 install -p -D -m 755 %{SOURCE11} %{buildroot}%{_initrddir}/%{name}-api
@@ -613,7 +641,16 @@ fi
 
 %files node-compute
 
+%files cc-config
+%config(noreplace) %attr(0600, nova, nobody) %{_sysconfdir}/nova/nova.conf
+
+%files compute-config
+%config(noreplace) %attr(0600, nova, nobody) %{_sysconfdir}/nova/nova.conf
+
 %changelog
+* Fri Sep 23 2011 Pavel Shkitin <pshkitin@griddynamics.com> - 2011.3-3
+- Added config packages for controller and compute nodes
+
 * Fri Aug 26 2011 Alessio Ababilov <aababilov@griddynamics.com> - 2011.3-0.20110826.1448
 - Fixed openstack-nova-scsi-target-utils-support.patch
 
