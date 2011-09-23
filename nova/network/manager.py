@@ -110,6 +110,8 @@ flags.DEFINE_string('network_host', socket.gethostname(),
                     'Network host to use for ip allocation in flat modes')
 flags.DEFINE_bool('fake_call', False,
                   'If True, skip using the queue and make local calls')
+flags.DEFINE_bool('force_dhcp_release', False,
+                  'If True, send a dhcp release on instance termination')
 
 
 class AddressAlreadyAllocated(exception.Error):
@@ -128,8 +130,8 @@ class RPCAllocateFixedIP(object):
         """Calls allocate_fixed_ip once for each network."""
         green_pool = greenpool.GreenPool()
 
-        vpn = kwargs.pop('vpn')
-        requested_networks = kwargs.pop('requested_networks')
+        vpn = kwargs.get('vpn')
+        requested_networks = kwargs.get('requested_networks')
 
         for network in networks:
             address = None
@@ -289,7 +291,8 @@ class FloatingIP(object):
 
         self.db.floating_ip_fixed_ip_associate(context,
                                                floating_address,
-                                               fixed_address)
+                                               fixed_address,
+                                               self.host)
         self.driver.bind_floating_ip(floating_address)
         self.driver.ensure_floating_forward(floating_address, fixed_address)
 
@@ -628,6 +631,11 @@ class NetworkManager(manager.SchedulerDependentManager):
         instance_id = instance_ref['id']
         self._do_trigger_security_group_members_refresh_for_instance(
                                                                    instance_id)
+        if FLAGS.force_dhcp_release:
+            dev = self.driver.get_dev(fixed_ip_ref['network'])
+            vif = self.db.virtual_interface_get_by_instance_and_network(
+                    context, instance_ref['id'], fixed_ip_ref['network']['id'])
+            self.driver.release_dhcp(dev, address, vif['address'])
 
     def lease_fixed_ip(self, context, address):
         """Called by dhcp-bridge when ip is leased."""
@@ -904,7 +912,7 @@ class FlatManager(NetworkManager):
     def _allocate_fixed_ips(self, context, instance_id, host, networks,
                             **kwargs):
         """Calls allocate_fixed_ip once for each network."""
-        requested_networks = kwargs.pop('requested_networks')
+        requested_networks = kwargs.get('requested_networks')
         for network in networks:
             address = None
             if requested_networks is not None:
@@ -1005,7 +1013,8 @@ class VlanManager(RPCAllocateFixedIP, FloatingIP, NetworkManager):
             address = network['vpn_private_address']
             self.db.fixed_ip_associate(context,
                                        address,
-                                       instance_id)
+                                       instance_id,
+                                       reserved=True)
         else:
             address = kwargs.get('address', None)
             if address:
