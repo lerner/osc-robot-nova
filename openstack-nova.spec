@@ -55,7 +55,7 @@ BuildRequires:    intltool
 
 Requires:         openstack-noVNC >= %{version}
 Requires:         python-nova = %{version}-%{release}
-Requires:         %{name}-config = %{version}-%{release}
+Requires:         %{name}-config >= %{version}
 Requires:         sudo
 Requires:         euca2ools = 1:1.3.1-gd3
 
@@ -82,7 +82,7 @@ Summary:          OpenStack Nova full node installation
 Group:            Applications/System
 
 Requires:         %{name} = %{version}-%{release}
-Requires:         %{name}-cc-config = %{version}-%{release}
+Requires:         %{name}-cc-config >= %{version}
 Requires:         %{name}-api = %{version}-%{release}
 Requires:         %{name}-compute = %{version}-%{release}
 Requires:         %{name}-network = %{version}-%{release}
@@ -106,7 +106,7 @@ Summary:          OpenStack Nova compute node installation
 Group:            Applications/System
 
 Requires:         %{name} = %{version}-%{release}
-Requires:         %{name}-compute-config = %{version}-%{release}
+Requires:         %{name}-compute-config >= %{version}
 Requires:         %{name}-compute = %{version}-%{release}
 Requires:         %{name}-network = %{version}-%{release}
 Requires:         MySQL-python
