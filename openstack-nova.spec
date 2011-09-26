@@ -89,6 +89,7 @@ Requires:         %{name}-network = %{version}-%{release}
 Requires:         openstack-noVNC = %{version}
 Requires:         %{name}-objectstore = %{version}-%{release}
 Requires:         %{name}-scheduler = %{version}-%{release}
+Requires:         python-kombu
 Requires:         %{name}-volume = %{version}-%{release}
 Requires:         openstack-client
 Requires:         openstack-glance = %{version}
