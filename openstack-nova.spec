@@ -237,6 +237,7 @@ Group:            Applications/System
 
 Requires:         %{name} = %{version}-%{release}
 Requires:         start-stop-daemon
+Requires:         python-kombu
 
 %description      scheduler
 Nova is a cloud computing fabric controller (the main part of an IaaS system)
