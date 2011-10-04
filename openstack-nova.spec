@@ -575,7 +575,7 @@ fi
 
 %files compute
 %defattr(-,root,root,-)
-%{_sysconfdir}/polkit-1/localauthority/50-local.d/50-openstack-nova.pkla
+%config %{_sysconfdir}/polkit-1/localauthority/50-local.d/50-openstack-nova.pkla
 %{_bindir}/euca-get-ajax-console
 %{_bindir}/nova-ajax-console-proxy
 %{_bindir}/nova-compute
