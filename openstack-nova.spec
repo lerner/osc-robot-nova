@@ -90,7 +90,7 @@ Requires:         openstack-noVNC = %{version}
 Requires:         %{name}-objectstore = %{version}-%{release}
 Requires:         %{name}-scheduler = %{version}-%{release}
 Requires:         %{name}-volume = %{version}-%{release}
-Requires:         openstack-client
+Requires:         openstack-client = %{version}
 Requires:         openstack-glance = %{version}
 #Requires:         openstack-glance-doc = %{version} # shouldn`t have this dep
 %if 0%{?with_doc}
@@ -145,7 +145,7 @@ Requires:         python-tornado
 Requires:         python-webob
 Requires:         python-netaddr
 Requires:         python-glance
-Requires:         python-novaclient
+Requires:         python-novaclient = %{version}
 Requires:         python-lxml
 Requires:         python-sqlalchemy-migrate
 Requires:         radvd
