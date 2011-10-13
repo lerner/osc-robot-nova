@@ -156,6 +156,7 @@ Requires:         lvm2
 Requires:         socat
 Requires:         coreutils
 Requires:         python-libguestfs
+Requires:         python-kombu
 
 %description -n   python-nova
 Nova is a cloud computing fabric controller (the main part of an IaaS system)
@@ -237,7 +238,6 @@ Group:            Applications/System
 
 Requires:         %{name} = %{version}-%{release}
 Requires:         start-stop-daemon
-Requires:         python-kombu
 
 %description      scheduler
 Nova is a cloud computing fabric controller (the main part of an IaaS system)
