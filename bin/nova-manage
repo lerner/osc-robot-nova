@@ -181,7 +181,7 @@ class VpnCommands(object):
         print "WARNING: This method only works with deprecated auth"
         ctxt = context.get_admin_context()
         for p in reversed(self.manager.get_projects()):
-            if not self._vpn_for(ctxt, p.id):
+            if self._vpn_for(ctxt, p.id):
                 print 'spawning %s' % p.id
                 self.pipe.launch_vpn_instance(p.id, p.project_manager_id)
                 time.sleep(10)
