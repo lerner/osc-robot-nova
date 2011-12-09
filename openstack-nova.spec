@@ -5,6 +5,7 @@
 %endif
 
 Name:             openstack-nova
+Epoch:            1
 Version:	      2011.3
 Release:	      3
 Summary:          OpenStack Compute (nova)
